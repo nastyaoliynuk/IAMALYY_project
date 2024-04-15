@@ -3,9 +3,8 @@
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.51">
     <root id="1">
       <DateStyle>dmy</DateStyle>
-      <IntrospectionStateNumber>739</IntrospectionStateNumber>
       <ServerVersion>14.11</ServerVersion>
-      <StartupTime>1711367936</StartupTime>
+      <StartupTime>1713161393</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -801,7 +800,6 @@ false Zulu
 13388||10|C|G
 13388||-9223372036854775808|U|G
 13388||10|U|G</Grants>
-      <IntrospectionStateNumber>739</IntrospectionStateNumber>
       <ObjectId>16395</ObjectId>
       <OwnerName>root</OwnerName>
     </database>
@@ -4239,7 +4237,6 @@ false Zulu
     <schema id="263" parent="2" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>739</IntrospectionStateNumber>
       <LastIntrospectionLocalTimestamp>2024-03-25.12:23:47</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>527</StateNumber>
