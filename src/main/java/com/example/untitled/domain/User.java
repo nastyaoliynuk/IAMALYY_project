@@ -5,16 +5,18 @@ import java.time.LocalDate;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import jakarta.validation.constraints.NotBlank;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Entity
 @Table(name = "users")
 public class User {
     @Id
-    @NotBlank
+    @NotBlank(message = "Username cannot be blank")//Валідація на рівні моделі з використанням аннотацій:
     @Column(name = "username")
     private String username;
-    @NotBlank
+    @NotBlank(message = "Password cannot be blank")//Валідація на рівні моделі з використанням аннотацій:
     @Column(name = "password")
     private String password;
     @Column(name = "phone-number")
@@ -24,7 +26,8 @@ public class User {
     @Column(name = "name")
     private String name;
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
     @Column(name = "b-day")
     private LocalDate birthday;
     @Column(name = "info-about-me")
@@ -34,20 +37,39 @@ public class User {
     @Column(name = "avatar")
     private String avatar;
 
+    public enum UserStatus {
+        NONAME,
+        MODEL,
+        PHOTOGRAF
+    }
+
 
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+        if (username.contains(" ")) {
+            throw new IllegalArgumentException("Username cannot contain spaces");
+        }
         this.username = username;
     }
+
 
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
+        if (password.contains(" ")) {
+            throw new IllegalArgumentException("Password cannot contain spaces");
+        }
         this.password = password;
     }
 
@@ -58,8 +80,9 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) throws NumberParseException {
         // Перевірка валідності номеру телефону перед ініціалізацією користувача
-        if (phoneNumber != null) {
-            if (phoneNumber.isEmpty() || isValidPhoneNumber(phoneNumber)) {
+        if (phoneNumber != null && !phoneNumber.isEmpty()) {
+
+            if (isValidPhoneNumber(phoneNumber)) {
                 this.phoneNumber = phoneNumber;
             } else {
                 throw new NumberParseException(NumberParseException.ErrorType.INVALID_COUNTRY_CODE,
@@ -77,7 +100,16 @@ public class User {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        if (email == null || email.trim().isEmpty()) {
+           this.email=null;
+        }
+        else {
+        if (!EmailValidator.isValid(email)) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+        else{
+        this.email = email;}
+        }
     }
 
     public String getName() {
@@ -85,24 +117,31 @@ public class User {
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (name == null || name.trim().isEmpty()) {
+            this.name = null;
+        } else {
+            this.name = name;
+        }
     }
 
-    public String getStatus() {
+    public UserStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(UserStatus status) {
         this.status = status;
     }
-
 
     public LocalDate getB_day() {
         return birthday;
     }
 
     public void setB_day(LocalDate b_day) {
-        this.birthday = b_day;
+        if (b_day == null || b_day.isEqual(LocalDate.now())) {
+            this.birthday = null;
+        } else {
+            this.birthday = b_day;
+        }
     }
 
 
@@ -111,28 +150,37 @@ public class User {
     }
 
     public void setInfo_about_me(String info_about_me) {
-        this.infoAboutMe = info_about_me;
+        if (info_about_me == null || info_about_me.trim().isEmpty()) {
+            this.infoAboutMe = null;
+        } else {
+            this.infoAboutMe = info_about_me;
+        }
     }
     public String getLocation() {
         return location;
     }
 
     public void setLocation(String location) {
-        this.location = location;
+        if(location==null || location.trim().isEmpty()){
+            this.location=null;
+        }
+        else {
+        this.location = location;}
     }
     public String getAvatar() {
         return avatar;
     }
 
     public void setAvatar(String avatar) {
-        this.avatar = avatar;
+        if (avatar == null || avatar.trim().isEmpty()) {
+            this.avatar = null;
+        } else {
+            this.avatar = avatar;
+        }
     }
-    public void setLoginAndPassword(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+
     // Метод для перевірки валідності номеру телефону
-    private boolean isValidPhoneNumber(String phoneNumber) throws NumberParseException {
+    private boolean isValidPhoneNumber(String phoneNumber) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try {
             return phoneNumberUtil.isValidNumber(phoneNumberUtil.parse(phoneNumber, null));
@@ -140,4 +188,20 @@ public class User {
             return false;
         }
     }
+
+
+    public class EmailValidator {
+
+        private static final String EMAIL_PATTERN =
+                "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+        private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+
+        public static boolean isValid(String email) {
+            Matcher matcher = pattern.matcher(email);
+            return matcher.matches();
+        }
+    }
+
 }

@@ -3,6 +3,8 @@ package com.example.untitled.controller;
 import com.example.untitled.domain.User;
 import com.example.untitled.repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,16 +19,16 @@ public class LoginController {
     private UserRepository userRepository;
 
     @PostMapping("/login")
-    public String login(@RequestBody User request) {
-        // Отримати дані про користувача з бази даних за допомогою репозиторія
-        User user = userRepository.findByUsername(request.getUsername());
+    public ResponseEntity login(@RequestBody User request)
+    {
 
-        // Перевірити, чи знайдено користувача та чи співпадає його пароль
-        if (user != null && user.getPassword().equals(request.getPassword())) {
-            return "Login successful"; // Повернути успішне повідомлення
+        User user = userRepository.findByUsernameAndPassword(request.getUsername(),request.getPassword());
+        if (user != null ) {
+            return  ResponseEntity.ok("Login successful");
         } else {
-            return "Invalid username or password"; // Повернути повідомлення про невірний логін або пароль
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
+
     }
 }
 

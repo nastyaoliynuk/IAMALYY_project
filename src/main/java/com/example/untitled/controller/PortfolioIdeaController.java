@@ -7,34 +7,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.untitled.repos.UserRepository;
+
 
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://192.168.0.186:4200")
 @RequestMapping("/api/ideas")
 public class PortfolioIdeaController {
 
     private final PortfolioIdeaRepository portfolioIdeaRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     public PortfolioIdeaController(PortfolioIdeaRepository portfolioIdeaRepository) {
         this.portfolioIdeaRepository = portfolioIdeaRepository;
     }
 
-    // Endpoint для створення нової ідеї
     @PostMapping("/create")
-    public ResponseEntity<PortfolioIdea> createIdea(@RequestBody PortfolioIdea idea) {
+    public ResponseEntity<?> createIdea(@RequestBody PortfolioIdea idea) {
+        if (!userRepository.existsByUsername(idea.getUserId())) {
+            return ResponseEntity.badRequest().body("User not found"); // Повертаємо помилку, якщо користувач не існує
+        }
         PortfolioIdea savedIdea = portfolioIdeaRepository.save(idea);
-        return new ResponseEntity<>(savedIdea, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedIdea);
     }
 
-    // Endpoint для отримання всіх ідей
+
     @GetMapping("/all")
     public ResponseEntity<List<PortfolioIdea>> getAllIdeas() {
         List<PortfolioIdea> ideas = portfolioIdeaRepository.findAll();
         return new ResponseEntity<>(ideas, HttpStatus.OK);
     }
 
-    // Додаткові методи контролера можна додавати для отримання конкретних ідей, оновлення, видалення і т. д.
 }
 

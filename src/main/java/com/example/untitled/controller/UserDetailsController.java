@@ -23,8 +23,6 @@ public class UserDetailsController {
         if (existingUser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
-
-        // Оновлення інформації про користувача
         try {
             existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
         } catch (NumberParseException e) {
@@ -35,22 +33,15 @@ public class UserDetailsController {
         existingUser.setInfo_about_me(updatedUser.getInfo_about_me());
         existingUser.setLocation(updatedUser.getLocation());
         existingUser.setAvatar(updatedUser.getAvatar());
-        existingUser.setStatus(updatedUser.getAvatar());
+        existingUser.setStatus(updatedUser.getStatus());
+        existingUser.setB_day(updatedUser.getB_day());
+
 
         userRepository.save(existingUser);
 
         return ResponseEntity.ok("Profile updated successfully");
     }}
 
-   /* @GetMapping("/get/{username}")
-    public ResponseEntity<User> getProfile(@PathVariable String username) {
-        // Пошук користувача за ім'ям
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
 
-        return ResponseEntity.ok(user);
-    }*/
 
 

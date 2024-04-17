@@ -14,8 +14,8 @@ public class PortfolioIdea {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private String userId;
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "idea_title")
     private String ideaTitle;
@@ -37,8 +37,8 @@ public class PortfolioIdea {
         this.publicationDate = LocalDate.now(); // Встановлення поточної дати при створенні нової ідеї
     }
 
-    public PortfolioIdea(String userId, String ideaTitle, String description, List<String> photoUrls) {
-        this.userId = userId;
+    public PortfolioIdea(String username, String ideaTitle, String description, List<String> photoUrls) {
+        this.username = username;
         this.ideaTitle = ideaTitle;
         this.description = description;
         this.publicationDate = LocalDate.now(); // Встановлення поточної дати при створенні нової ідеї
@@ -56,11 +56,11 @@ public class PortfolioIdea {
     }
 
     public String getUserId() {
-        return userId;
+        return username;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserId(String username) {
+        this.username = username;
     }
 
     public String getIdeaTitle() {
